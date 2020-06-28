@@ -17,7 +17,7 @@
 # build for Meson reference board.
 #
 
-PRODUCT_DIR := kvim3l
+PRODUCT_DIR := u212
 
 # Dynamic enable start/stop zygote_secondary in 64bits
 # and 32bit system, default closed
@@ -82,11 +82,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
         persist.vendor.sys.cec.set_menu_language=false
 
-PRODUCT_NAME := kvim3l
-PRODUCT_DEVICE := kvim3l
-PRODUCT_BRAND := Khadas
-PRODUCT_MODEL := VIM3L
-PRODUCT_MANUFACTURER := Khadas
+PRODUCT_NAME := u212
+PRODUCT_DEVICE := u212
+PRODUCT_BRAND := Droidlogic
+PRODUCT_MODEL := u212
+PRODUCT_MANUFACTURER := Droidlogic
 
 TARGET_KERNEL_BUILT_FROM_SOURCE := true
 
@@ -171,21 +171,41 @@ endif
 #########Support compiling out encrypted zip/aml_upgrade_package.img directly
 #PRODUCT_BUILD_SECURE_BOOT_IMAGE_DIRECTLY := true
 #PRODUCT_AML_SECURE_BOOT_VERSION3 := true
-ifeq ($(PRODUCT_AML_SECURE_BOOT_VERSION3),true)
-PRODUCT_AML_SECUREBOOT_RSAKEY_DIR := ./bootloader/uboot/board/khadas/kvim3l/aml-key
-PRODUCT_AML_SECUREBOOT_AESKEY_DIR := ./bootloader/uboot/board/khadas/kvim3l/aml-key
-PRODUCT_SBV3_SIGBL_TOOL  := ./bootloader/uboot/fip/stool/amlogic-sign-g12a.sh -s g12a
-PRODUCT_SBV3_SIGIMG_TOOL := ./bootloader/uboot/fip/stool/signing-tool-g12a/sign-boot-g12a.sh --sign-kernel -h 2
+ifeq ($(PRODUCT_AML_SECURE_BOOT_VMX),true)
+PRODUCT_BUILD_SECURE_BOOT_IMAGE_DIRECTLY := true
+
+PRODUCT_AML_VMX_ARB_REE_VERSION := 0
+PRODUCT_AML_VMX_MARKETID := 0x1
+PRODUCT_AML_VMX_KEY_DIR := ultra-key-s905x2-$(PRODUCT_AML_VMX_MARKETID)
+
+PRODUCT_SIGNTOOL_FOR_VMX_DIR := ./bootloader/uboot-repo/fip/g12a/signing_tool_m9d2
+PRODUCT_AML_SECUREBOOT_VMX_KEY_PATH := $(PRODUCT_SIGNTOOL_FOR_VMX_DIR)/$(PRODUCT_AML_VMX_KEY_DIR)
+PRODUCT_AML_SECUREBOOT_SIGNTOOL_VMX := $(PRODUCT_SIGNTOOL_FOR_VMX_DIR)/sign-all.sh
+PRODUCT_AML_SECUREBOOT_SIGNIMAGE_VMX := $(PRODUCT_AML_SECUREBOOT_SIGNTOOL_VMX)  --sign-kernel \
+                                        -k  $(PRODUCT_AML_SECUREBOOT_VMX_KEY_PATH)/stbm.pem \
+                                        --aes2 $(PRODUCT_AML_SECUREBOOT_VMX_KEY_PATH)/stbm.aes2 \
+                                        -v $(PRODUCT_AML_VMX_ARB_REE_VERSION)
+
+PRODUCT_AML_SECUREBOOT_SIGNIMAGE_VMX_DTB := $(PRODUCT_AML_SECUREBOOT_SIGNTOOL_VMX)  --sign-dtb \
+                                        -k  $(PRODUCT_AML_SECUREBOOT_VMX_KEY_PATH)/stbm.pem \
+                                        --aes2 $(PRODUCT_AML_SECUREBOOT_VMX_KEY_PATH)/stbm.aes2 \
+                                        -v $(PRODUCT_AML_VMX_ARB_REE_VERSION)
+                                        
+else ifeq ($(PRODUCT_AML_SECURE_BOOT_VERSION3),true)
+PRODUCT_AML_SECUREBOOT_RSAKEY_DIR := ./bootloader/uboot-repo/bl33/board/amlogic/g12a_u212_v1/aml-key
+PRODUCT_AML_SECUREBOOT_AESKEY_DIR := ./bootloader/uboot-repo/bl33/board/amlogic/g12a_u212_v1/aml-key
+PRODUCT_SBV3_SIGBL_TOOL  := ./bootloader/uboot-repo/fip/stool/amlogic-sign-g12a.sh -s g12a
+PRODUCT_SBV3_SIGIMG_TOOL := ./bootloader/uboot-repo/fip/stool/signing-tool-g12a-dev/kernel.encrypt.signed.bash
 else
-PRODUCT_AML_SECUREBOOT_USERKEY := ./bootloader/uboot/board/khadas/kvim3l/aml-user-key.sig
-PRODUCT_AML_SECUREBOOT_SIGNTOOL := ./bootloader/uboot/fip/g12a/aml_encrypt_g12a
+PRODUCT_AML_SECUREBOOT_USERKEY := ./bootloader/uboot-repo/bl33/board/amlogic/g12a_u212_v1/aml-user-key.sig
+PRODUCT_AML_SECUREBOOT_SIGNTOOL := ./bootloader/uboot-repo/fip/g12a/aml_encrypt_g12a
 PRODUCT_AML_SECUREBOOT_SIGNBOOTLOADER := $(PRODUCT_AML_SECUREBOOT_SIGNTOOL) --bootsig \
-						--amluserkey $(PRODUCT_AML_SECUREBOOT_USERKEY) \
-						--aeskey enable
+                                                --amluserkey $(PRODUCT_AML_SECUREBOOT_USERKEY) \
+                                                --aeskey enable
 PRODUCT_AML_SECUREBOOT_SIGNIMAGE := $(PRODUCT_AML_SECUREBOOT_SIGNTOOL) --imgsig \
-					--amluserkey $(PRODUCT_AML_SECUREBOOT_USERKEY)
-PRODUCT_AML_SECUREBOOT_SIGBIN	:= $(PRODUCT_AML_SECUREBOOT_SIGNTOOL) --binsig \
-					--amluserkey $(PRODUCT_AML_SECUREBOOT_USERKEY)
+                                        --amluserkey $(PRODUCT_AML_SECUREBOOT_USERKEY)
+PRODUCT_AML_SECUREBOOT_SIGBIN   := $(PRODUCT_AML_SECUREBOOT_SIGNTOOL) --binsig \
+                                        --amluserkey $(PRODUCT_AML_SECUREBOOT_USERKEY)
 endif# PRODUCT_AML_SECURE_BOOT_VERSION3 := true
 
 ########################################################################
@@ -212,6 +232,14 @@ endif
 
 ########################################################################
 #
+#                           Tuner
+#
+########################################################################
+TUNER_MODULE := atbm8881
+include device/amlogic/common/tuner/tuner.mk
+
+########################################################################
+#
 #                           CTS
 #
 ########################################################################
@@ -223,6 +251,15 @@ TARGET_BUILD_NETFLIX:= true
 TARGET_BUILD_NETFLIX_MGKID := true
 endif
 ########################################################################
+
+########################################################################
+#
+#                           Live TV
+#
+########################################################################
+TARGET_BUILD_LIVETV := true
+PRODUCT_PACKAGES += \
+    droidlogic.tv.software.core.xml
 
 #########################################################################
 #
