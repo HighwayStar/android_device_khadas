@@ -1,3 +1,3 @@
-add_lunch_combo kvim-eng
-add_lunch_combo kvim-user
-add_lunch_combo kvim-userdebug
+add_lunch_combo t962x_r314-eng
+add_lunch_combo t962x_r314-user
+add_lunch_combo t962x_r314-userdebug
