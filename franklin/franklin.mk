@@ -17,7 +17,7 @@
 # build for Meson reference board.
 #
 
-PRODUCT_DIR := kvim3l
+PRODUCT_DIR := franklin
 
 # Dynamic enable start/stop zygote_secondary in 64bits
 # and 32bit system, default closed
@@ -82,11 +82,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
         persist.vendor.sys.cec.set_menu_language=false
 
-PRODUCT_NAME := kvim3l
-PRODUCT_DEVICE := kvim3l
-PRODUCT_BRAND := Khadas
-PRODUCT_MODEL := VIM3L
-PRODUCT_MANUFACTURER := Khadas
+PRODUCT_NAME := franklin
+PRODUCT_DEVICE := franklin
+PRODUCT_BRAND := Droidlogic
+PRODUCT_MODEL := franklin
+PRODUCT_MANUFACTURER := Droidlogic
 
 TARGET_KERNEL_BUILT_FROM_SOURCE := true
 
@@ -172,13 +172,13 @@ endif
 #PRODUCT_BUILD_SECURE_BOOT_IMAGE_DIRECTLY := true
 #PRODUCT_AML_SECURE_BOOT_VERSION3 := true
 ifeq ($(PRODUCT_AML_SECURE_BOOT_VERSION3),true)
-PRODUCT_AML_SECUREBOOT_RSAKEY_DIR := ./bootloader/uboot/board/khadas/kvim3l/aml-key
-PRODUCT_AML_SECUREBOOT_AESKEY_DIR := ./bootloader/uboot/board/khadas/kvim3l/aml-key
-PRODUCT_SBV3_SIGBL_TOOL  := ./bootloader/uboot/fip/stool/amlogic-sign-g12a.sh -s g12a
-PRODUCT_SBV3_SIGIMG_TOOL := ./bootloader/uboot/fip/stool/signing-tool-g12a/sign-boot-g12a.sh --sign-kernel -h 2
+PRODUCT_AML_SECUREBOOT_RSAKEY_DIR := ./bootloader/uboot-repo/bl33/board/amlogic/g12a_u212_v1/aml-key
+PRODUCT_AML_SECUREBOOT_AESKEY_DIR := ./bootloader/uboot-repo/bl33/board/amlogic/g12a_u212_v1/aml-key
+PRODUCT_SBV3_SIGBL_TOOL  := ./bootloader/uboot-repo/fip/stool/amlogic-sign-g12a.sh -s g12a
+PRODUCT_SBV3_SIGIMG_TOOL := ./bootloader/uboot-repo/fip/stool/signing-tool-g12a-dev/kernel.encrypt.signed.bash
 else
-PRODUCT_AML_SECUREBOOT_USERKEY := ./bootloader/uboot/board/khadas/kvim3l/aml-user-key.sig
-PRODUCT_AML_SECUREBOOT_SIGNTOOL := ./bootloader/uboot/fip/g12a/aml_encrypt_g12a
+PRODUCT_AML_SECUREBOOT_USERKEY := ./bootloader/uboot-repo/bl33/board/amlogic/g12a_u212_v1/aml-user-key.sig
+PRODUCT_AML_SECUREBOOT_SIGNTOOL := ./bootloader/uboot-repo/fip/g12a/aml_encrypt_g12a
 PRODUCT_AML_SECUREBOOT_SIGNBOOTLOADER := $(PRODUCT_AML_SECUREBOOT_SIGNTOOL) --bootsig \
 						--amluserkey $(PRODUCT_AML_SECUREBOOT_USERKEY) \
 						--aeskey enable
@@ -212,6 +212,14 @@ endif
 
 ########################################################################
 #
+#                           Tuner
+#
+########################################################################
+TUNER_MODULE := atbm8881
+include device/amlogic/common/tuner/tuner.mk
+
+########################################################################
+#
 #                           CTS
 #
 ########################################################################
@@ -223,6 +231,15 @@ TARGET_BUILD_NETFLIX:= true
 TARGET_BUILD_NETFLIX_MGKID := true
 endif
 ########################################################################
+
+########################################################################
+#
+#                           Live TV
+#
+########################################################################
+TARGET_BUILD_LIVETV := true
+PRODUCT_PACKAGES += \
+    droidlogic.tv.software.core.xml
 
 #########################################################################
 #

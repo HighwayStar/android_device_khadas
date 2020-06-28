@@ -77,9 +77,9 @@ PRODUCT_COPY_FILES += \
     device/khadas/$(PRODUCT_DIR)/recovery/sh:recovery/root/sbin/sh
 
 $(shell python $(LOCAL_PATH)/auto_generator.py preinstall)
--include device/khadas/kvim3l/preinstall/preinstall.mk
+-include device/khadas/franklin/preinstall/preinstall.mk
 PRODUCT_COPY_FILES += \
-    device/khadas/kvim3l/preinstall/preinstall.sh:system/bin/preinstall.sh
+    device/khadas/franklin/preinstall/preinstall.sh:system/bin/preinstall.sh
 
 # remote IME config file
 PRODUCT_COPY_FILES += \
