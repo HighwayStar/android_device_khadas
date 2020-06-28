@@ -1,3 +1,3 @@
-add_lunch_combo kvim3-eng
-add_lunch_combo kvim3-user
-add_lunch_combo kvim3-userdebug
+add_lunch_combo galilei-eng
+add_lunch_combo galilei-user
+add_lunch_combo galilei-userdebug

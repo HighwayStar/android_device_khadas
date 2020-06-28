@@ -15,9 +15,9 @@ ifeq ($(PRODUCT_BUILD_SECURE_BOOT_IMAGE_DIRECTLY),true)
 endif# ifeq ($(PRODUCT_BUILD_SECURE_BOOT_IMAGE_DIRECTLY),true)
 
 ifneq ($(TARGET_KERNEL_BUILT_FROM_SOURCE), true)
-TARGET_PREBUILT_KERNEL := device/khadas/kvim3-kernel/Image.gz
+TARGET_PREBUILT_KERNEL := device/khadas/galilei-kernel/Image.gz
 INSTALLED_BOARDDTB_TARGET := $(PRODUCT_OUT)/dt.img
-LOCAL_DTB := device/khadas/kvim3-kernel/kvim3.dtb
+LOCAL_DTB := device/khadas/galilei-kernel/galilei.dtb
 
 $(TARGET_PREBUILT_KERNEL): $(INSTALLED_BOARDDTB_TARGET)
 	@echo "cp kernel modules"
@@ -27,16 +27,16 @@ $(TARGET_PREBUILT_KERNEL): $(INSTALLED_BOARDDTB_TARGET)
 	mkdir -p $(PRODUCT_OUT)/obj/KERNEL_OBJ/
 	mkdir -p $(PRODUCT_OUT)/recovery/root/boot
 	mkdir -p $(KERNEL_KO_OUT)
-	cp device/khadas/kvim3-kernel/lib/mali.ko $(PRODUCT_OUT)/vendor/lib/
-	cp device/khadas/kvim3-kernel/lib/modules/* $(KERNEL_KO_OUT)/
-	cp device/khadas/kvim3-kernel/lib/optee_armtz.ko $(PRODUCT_OUT)/vendor/lib/
-	cp device/khadas/kvim3-kernel/lib/optee.ko $(PRODUCT_OUT)/vendor/lib/
-	cp device/khadas/kvim3-kernel/lib/firmware/video/* $(PRODUCT_OUT)/vendor/lib/firmware/video/
-	-cp device/khadas/kvim3-kernel/obj/KERNEL_OBJ/vmlinux $(PRODUCT_OUT)/obj/KERNEL_OBJ/
+	cp device/khadas/galilei-kernel/lib/mali.ko $(PRODUCT_OUT)/vendor/lib/
+	cp device/khadas/galilei-kernel/lib/modules/* $(KERNEL_KO_OUT)/
+	cp device/khadas/galilei-kernel/lib/optee_armtz.ko $(PRODUCT_OUT)/vendor/lib/
+	cp device/khadas/galilei-kernel/lib/optee.ko $(PRODUCT_OUT)/vendor/lib/
+	cp device/khadas/galilei-kernel/lib/firmware/video/* $(PRODUCT_OUT)/vendor/lib/firmware/video/
+	-cp device/khadas/galilei-kernel/obj/KERNEL_OBJ/vmlinux $(PRODUCT_OUT)/obj/KERNEL_OBJ/
 	mkdir -p $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/lib/modules/
 	cp $(KERNEL_KO_OUT)/* $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)/lib/modules/
 	mkdir -p $(PRODUCT_OUT)/vendor/lib/egl
-	cp device/khadas/kvim3-kernel/lib/egl/* $(PRODUCT_OUT)/vendor/lib/egl/
+	cp device/khadas/galilei-kernel/lib/egl/* $(PRODUCT_OUT)/vendor/lib/egl/
 
 $(INSTALLED_KERNEL_TARGET): $(TARGET_PREBUILT_KERNEL) | $(ACP)
 	@echo "Kernel installed"
@@ -59,8 +59,8 @@ else
 -include device/khadas/common/arm_isp_modules.mk
 -include device/khadas/common/tb_modules.mk
 
-KERNEL_DEVICETREE := kvim3
-KERNEL_DEFCONFIG := kvim_defconfig
+KERNEL_DEVICETREE := g12b_a311d_w400
+KERNEL_DEFCONFIG := meson64_defconfig
 KERNEL_ARCH := arm64
 
 DTBO_DEVICETREE := android_p_overlay_dt
@@ -68,13 +68,13 @@ DTBO_DEVICETREE := android_p_overlay_dt
 KERNEL_OUT := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ
 
 ifeq ($(KERNEL_A32_SUPPORT), true)
-KERNEL_DEFCONFIG := kvim_a32_defconfig
+KERNEL_DEFCONFIG := meson64_a32_defconfig
 KERNEL_ARCH := arm
 INTERMEDIATES_KERNEL := $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/uImage
 PREFIX_CROSS_COMPILE=/opt/toolchains/gcc-linaro-6.3.1-2017.02-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-
 BUILD_CONFIG := $(KERNEL_DEFCONFIG)
 else
-KERNEL_DEFCONFIG := kvim_defconfig
+KERNEL_DEFCONFIG := meson64_defconfig
 KERNEL_ARCH := arm64
 INTERMEDIATES_KERNEL := $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/Image.gz
 PREFIX_CROSS_COMPILE=/opt/toolchains/gcc-linaro-6.3.1-2017.02-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
