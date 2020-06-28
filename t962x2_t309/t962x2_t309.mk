@@ -17,7 +17,7 @@
 # build for Meson reference board.
 #
 
-PRODUCT_DIR := kvim3l
+PRODUCT_DIR := t962x2_t309
 
 # Dynamic enable start/stop zygote_secondary in 64bits
 # and 32bit system, default closed
@@ -70,27 +70,21 @@ endif
 endif
 endif
 
-# franklin:
+# t962x2_t309:
 PRODUCT_PROPERTY_OVERRIDES += \
-        ro.hdmi.device_type=4 \
-        ro.hdmi.set_menu_language=true \
-        persist.sys.hdmi.keep_awake=false
+        sys.fb.bits=32 \
+        ro.hdmi.device_type=0
 
-PRODUCT_PROPERTY_OVERRIDES += \
-        ro.build.display.id=VIM3L_Pie_$(shell date +%Y%m%d)
 
-PRODUCT_PROPERTY_OVERRIDES += \
-        persist.vendor.sys.cec.set_menu_language=false
-
-PRODUCT_NAME := kvim3l
-PRODUCT_DEVICE := kvim3l
-PRODUCT_BRAND := Khadas
-PRODUCT_MODEL := VIM3L
-PRODUCT_MANUFACTURER := Khadas
+PRODUCT_NAME := t962x2_t309
+PRODUCT_DEVICE := t962x2_t309
+PRODUCT_BRAND := Droidlogic
+PRODUCT_MODEL := t962x2_t309
+PRODUCT_MANUFACTURER := Droidlogic
 
 TARGET_KERNEL_BUILT_FROM_SOURCE := true
 
-PRODUCT_TYPE := mbox
+PRODUCT_TYPE := tv
 
 BOARD_AML_VENDOR_PATH := vendor/amlogic/common/
 BOARD_WIDEVINE_TA_PATH := vendor/amlogic/
@@ -172,16 +166,16 @@ endif
 #PRODUCT_BUILD_SECURE_BOOT_IMAGE_DIRECTLY := true
 #PRODUCT_AML_SECURE_BOOT_VERSION3 := true
 ifeq ($(PRODUCT_AML_SECURE_BOOT_VERSION3),true)
-PRODUCT_AML_SECUREBOOT_RSAKEY_DIR := ./bootloader/uboot/board/khadas/kvim3l/aml-key
-PRODUCT_AML_SECUREBOOT_AESKEY_DIR := ./bootloader/uboot/board/khadas/kvim3l/aml-key
-PRODUCT_SBV3_SIGBL_TOOL  := ./bootloader/uboot/fip/stool/amlogic-sign-g12a.sh -s g12a
-PRODUCT_SBV3_SIGIMG_TOOL := ./bootloader/uboot/fip/stool/signing-tool-g12a/sign-boot-g12a.sh --sign-kernel -h 2
+PRODUCT_AML_SECUREBOOT_RSAKEY_DIR := ./bootloader/uboot-repo/bl33/board/amlogic/txlx_t962x_r311_v1/aml-key
+PRODUCT_AML_SECUREBOOT_AESKEY_DIR := ./bootloader/uboot-repo/bl33/board/amlogic/txlx_t962x_r311_v1/aml-key
+PRODUCT_SBV3_SIGBL_TOOL  := ./bootloader/uboot-repo/fip/stool/amlogic-sign-gxl.sh -s txlx
+PRODUCT_SBV3_SIGIMG_TOOL := ./bootloader/uboot-repo/fip/stool/signing-tool-gxl-dev/kernel.encrypt.signed.bash
 else
-PRODUCT_AML_SECUREBOOT_USERKEY := ./bootloader/uboot/board/khadas/kvim3l/aml-user-key.sig
-PRODUCT_AML_SECUREBOOT_SIGNTOOL := ./bootloader/uboot/fip/g12a/aml_encrypt_g12a
+PRODUCT_AML_SECUREBOOT_USERKEY := ./bootloader/uboot-repo/bl33/board/amlogic/txlx_t962x_r311_v1/aml-user-key.sig
+PRODUCT_AML_SECUREBOOT_SIGNTOOL := /bootloader/uboot-repo/fip/txlx/aml_encrypt_txlx
 PRODUCT_AML_SECUREBOOT_SIGNBOOTLOADER := $(PRODUCT_AML_SECUREBOOT_SIGNTOOL) --bootsig \
 						--amluserkey $(PRODUCT_AML_SECUREBOOT_USERKEY) \
-						--aeskey enable
+						--aeskey enable --level v3
 PRODUCT_AML_SECUREBOOT_SIGNIMAGE := $(PRODUCT_AML_SECUREBOOT_SIGNTOOL) --imgsig \
 					--amluserkey $(PRODUCT_AML_SECUREBOOT_USERKEY)
 PRODUCT_AML_SECUREBOOT_SIGBIN	:= $(PRODUCT_AML_SECUREBOOT_SIGNTOOL) --binsig \
@@ -212,6 +206,14 @@ endif
 
 ########################################################################
 #
+#                           Tuner
+#
+########################################################################
+TUNER_MODULE := mxl661
+include device/amlogic/common/tuner/tuner.mk
+
+########################################################################
+#
 #                           CTS
 #
 ########################################################################
@@ -223,6 +225,13 @@ TARGET_BUILD_NETFLIX:= true
 TARGET_BUILD_NETFLIX_MGKID := true
 endif
 ########################################################################
+
+########################################################################
+#
+#                           Live TV
+#
+########################################################################
+TARGET_BUILD_LIVETV := true
 
 #########################################################################
 #
